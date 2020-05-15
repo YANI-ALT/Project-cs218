@@ -92,12 +92,7 @@ class FlowNetwork
 
 };
 
-
-
-
-
-
-int main()
+void demo()
 {
   cout<<"____________In main___________"<<endl;
   FlowNetwork *F=new FlowNetwork(10);
@@ -118,5 +113,15 @@ int main()
 
   F->print();
 
+}
+
+
+
+
+
+int main()
+{
+
+  demo();
   return 0;
 }
