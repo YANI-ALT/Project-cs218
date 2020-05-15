@@ -51,8 +51,8 @@ class Flowedge
   }
   void print_res()
   {
-    cout<<v<<"---"<<Residual_cap(v,w)<<"---->"<<w;
-    cout<<v<<"<--"<<Residual_cap(w,v)<<"----"<<w;
+    cout<<v<<"---"<<Residual_cap(v,w)<<"---->"<<w<<endl;
+    cout<<v<<"<--"<<Residual_cap(w,v)<<"----"<<w<<endl;
 
   }
 
@@ -63,75 +63,86 @@ class Flowedge
 class FlowNetwork
 {
   public:
-  vector <Flowedge> F[100];
+  vector <Flowedge*> F[100];
 
 
   int N;
   FlowNetwork(int N1)
   {
-    cout<<"____________class FlowNetwork___________"<<endl;
+    // cout<<"____________class FlowNetwork___________"<<endl;
     N=N1;
     /*for(int i=0;i<N;i++)
     {
       F[i]= new vector<Flowedge>();
     }*/
   }
-  void add_edge(Flowedge e)
+  void add_edge(Flowedge* e)
   {
-    cout<<"____________add_Edge___________"<<endl;
+    // cout<<"____________add_Edge___________"<<endl;
     //cout<<e.from()<<"-->"<<e.to()<<endl;
-    F[e.from()].push_back(e);
+    F[e->from()].push_back(e);
     //cout<<"here";
-    F[e.to()].push_back(e);
+    F[e->to()].push_back(e);
   }
 
   void print()
   {
-    cout<<"______print_______"<<endl;
+    // cout<<"______print_______"<<endl;
     for(int i=0;i<N;i++)
     {
       cout<<i<<endl;
-      for(Flowedge w : F[i])
+      for(Flowedge* w : F[i])
       {
-        cout<<w.from()<<"----"<<w.flow<<"---->"<<w.to()<<endl;
+        cout<<w->from()<<"----"<<w->flow<<"---->"<<w->to()<<endl;
       }
     }
 
   }
-  void update(int v,Flowedge e,int flow)
+  void print_resg()
   {
-    int index1,index2=0;
-    for(Flowedge w: F[v])
+    for(int i=0;i<N;i++)
     {
-
-      if(w==e)
-      break;
-      index1++;
+      //cout<<i<<endl;
+      for(Flowedge* w : F[i])
+      {
+        w->print_res();
+      }
     }
-    for(Flowedge w: F[e.other(v)])
-    {
-
-      if(w==e)
-      break;
-      index2++;
-    }
-
-    e.add_ResidFlow(e.other(v),v,flow);
-
-    F[v].erase(index1)
-    F[v].push_back(e)
-
-    F[v].erase(index2)
-    F[v].push_back(e)
-
   }
+  // void update(int v,Flowedge e,int flow)
+  // {
+  //   int index1,index2=0;
+  //   for(Flowedge w: F[v])
+  //   {
+  //
+  //     if(w==e)
+  //     break;
+  //     index1++;
+  //   }
+  //   for(Flowedge w: F[e.other(v)])
+  //   {
+  //
+  //     if(w==e)
+  //     break;
+  //     index2++;
+  //   }
+  //
+  //   e.add_ResidFlow(e.other(v),v,flow);
+  //
+  //   F[v].erase(index1)
+  //   F[v].push_back(e)
+  //
+  //   F[v].erase(index2)
+  //   F[v].push_back(e)
+  //
+  // }
 
 
 };
 
 void demo()
 {
-  cout<<"____________In main___________"<<endl;
+  // cout<<"____________In main___________"<<endl;
   FlowNetwork *F=new FlowNetwork(10);
   int from,to,cap;
   for(int i=0;i<5;i++)
@@ -139,7 +150,7 @@ void demo()
     cin>>from>>to>>cap;
     Flowedge *e=new Flowedge(from,to,cap);
     e->print();
-    F->add_edge(*e);
+    F->add_edge(e);
   }
 
   F->print();
@@ -149,11 +160,11 @@ void demo()
 class FF
 {
   public:
-vector<Flowedge> path[100];
+vector<Flowedge*> path[100];
 
 bool hasAugment(FlowNetwork *G,int s,int t)//,Flowedge*path)
 {
-  cout<<"_____has_augment_____"<<endl;
+  // cout<<"_____has_augment_____"<<endl;
   //G->print();
   bool marked[100];
   for( int i=0;i<G->N;i++)
@@ -165,10 +176,10 @@ bool hasAugment(FlowNetwork *G,int s,int t)//,Flowedge*path)
   {
     int u=Q.front();
     Q.pop();
-    for(Flowedge w: G->F[u])
+    for(Flowedge* w: G->F[u])
     {
-      int vert=w.other(u);
-      if( w.Residual_cap(u,vert)>0&&!marked[vert])//only if its non zero does there exist a path
+      int vert=w->other(u);
+      if( w->Residual_cap(u,vert)>0&&!marked[vert])//only if its non zero does there exist a path
       {
         if(!path[vert].empty())
         path[vert].clear();
@@ -182,33 +193,31 @@ bool hasAugment(FlowNetwork *G,int s,int t)//,Flowedge*path)
     }
 
   }
-  cout<<"has_Augment: "<<marked[t]<<endl;
+  // cout<<"has_Augment: "<<marked[t]<<endl;
   return marked[t];
 }
 
 int augment(FlowNetwork *G,int s,int t)//,Flowedge path[])
 {
-  cout<<"___augment__"<<endl;
+  // cout<<"___augment__"<<endl;
   int bottle=10000000;
-  for(int v=t ;v!=s;v=path[v].front().other(v))//find the bottleneck capacity of the path
+  for(int v=t ;v!=s;v=path[v].front()->other(v))//find the bottleneck capacity of the path
   {
-    cout<<v<<" ";
-    if(bottle>path[v].front().Residual_cap(path[v].front().other(v),v))
-    bottle=path[v].front().Residual_cap(path[v].front().other(v),v);
+    // cout<<v<<" ";
+    if(bottle>path[v].front()->Residual_cap(path[v].front()->other(v),v))
+    bottle=path[v].front()->Residual_cap(path[v].front()->other(v),v);
   }
-  cout<<"Bottle Neck value: "<<bottle<<endl;
-  for(int v=t ;v!=s;v=path[v].front().other(v))//find the bottleneck capacity of the path
+  // cout<<"Bottle Neck value: "<<bottle<<endl;
+  for(int v=t ;v!=s;v=path[v].front()->other(v))//find the bottleneck capacity of the path
   {
 
 
-    path[v].front().add_ResidFlow(path[v].front().other(v),v,bottle);
+    path[v].front()->add_ResidFlow(path[v].front()->other(v),v,bottle);
 
-    path[v].front().print_res();
+    // path[v].front()->print_res();
 
-    G->update(v,path[v].front(),bottle);
 
   }
-  //G->print();
 
   return bottle;
 
@@ -218,7 +227,7 @@ int maxflow(FlowNetwork *G,int s,int t)
 {
 
 
-  cout<<"___max_flow___"<<endl;
+  // cout<<"___max_flow___"<<endl;
   int f=0;
   // int bottle=10000000;
   while(hasAugment(G,s,t))
@@ -226,8 +235,8 @@ int maxflow(FlowNetwork *G,int s,int t)
 
     f+=augment(G,s,t);
     // bottle;
-    cout<<"flow "<<f<<endl;
-    G->print();
+    // cout<<"flow "<<f<<endl;
+    // G->print();
   }
 
   return f;
@@ -245,7 +254,7 @@ int main()
 {
 
 
-  cout<<"____________In main___________"<<endl;
+  // cout<<"____________In main___________"<<endl;
   FlowNetwork *F=new FlowNetwork(10);
 
 
@@ -258,19 +267,19 @@ int main()
   {
     cin>>from>>to>>cap;
     Flowedge *e=new Flowedge(from,to,cap);
-    e->print();
-    F->add_edge(*e);
+    //e->print();
+    F->add_edge(e);
   }
   int s,t;
   cout<<"Enter the source of the graph: ";
   cin>>s;
-  cout<<"\n Enter the sink of the graph: ";
+  cout<<"Enter the sink of the graph: ";
   cin>>t;
   cout<<endl;
-  F->print();
+  //F->print();
   FF *ford_fulk=new FF;
-  cout<<ford_fulk->maxflow(F,s,t)<<endl;
-  F->print();
+  cout<<"MAX FLOW "<<ford_fulk->maxflow(F,s,t)<<endl;
+  F->print_resg();
 
 
 
