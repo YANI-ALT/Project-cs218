@@ -2,6 +2,13 @@
 #include <vector>
 #include <list>
 using namespace std;
+// DM and SSS
+
+// This is  a template for the graph of flow FlowNetwork
+// It uses a vector of refrences to edges hence any change will reflect everywhere
+// The print_reg and print function inside FlowNetwork are used to print the residual graph and graph as vertices with flow in them
+// The demo() can be used to see how to construct the graph
+
 class Flowedge
 {
 
@@ -45,76 +52,88 @@ class Flowedge
 
   void print()
   {
-    cout<<v<<"---"<<capacity<<"--->"<<w<<endl;
+    cout<<v<<"---"<<flow<<"--->"<<w<<endl;
   }
-};
+  void print_res()
+  {
+    cout<<v<<"---"<<Residual_cap(v,w)<<"---->"<<w<<endl;
+    cout<<v<<"<--"<<Residual_cap(w,v)<<"----"<<w<<endl;
 
+  }
+
+
+
+};
 
 class FlowNetwork
 {
-
-  vector <Flowedge> F[100];
-
   public:
+  vector <Flowedge*> F[100];
+
+
   int N;
   FlowNetwork(int N1)
   {
-    cout<<"____________class FlowNetwork___________"<<endl;
+    // cout<<"____________class FlowNetwork___________"<<endl;
     N=N1;
     /*for(int i=0;i<N;i++)
     {
       F[i]= new vector<Flowedge>();
     }*/
   }
-  void add_edge(Flowedge e)
+  void add_edge(Flowedge* e)
   {
-    cout<<"____________add_Edge___________"<<endl;
+    // cout<<"____________add_Edge___________"<<endl;
     //cout<<e.from()<<"-->"<<e.to()<<endl;
-    F[e.from()].push_back(e);
+    F[e->from()].push_back(e);
     //cout<<"here";
-    F[e.to()].push_back(e);
+    F[e->to()].push_back(e);
   }
 
   void print()
   {
-    cout<<"______print_______"<<endl;
+    // cout<<"______print_______"<<endl;
     for(int i=0;i<N;i++)
     {
       cout<<i<<endl;
-      for(Flowedge w : F[i])
+      for(Flowedge* w : F[i])
       {
-        cout<<w.from()<<"->"<<w.to()<<endl;
+        cout<<w->from()<<"----"<<w->flow<<"---->"<<w->to()<<endl;
       }
     }
 
   }
-
+  void print_resg()
+  {
+    for(int i=0;i<N;i++)
+    {
+      //cout<<i<<endl;
+      for(Flowedge* w : F[i])
+      {
+        w->print_res();
+      }
+    }
+  }
 
 };
 
 void demo()
 {
-  cout<<"____________In main___________"<<endl;
+  // cout<<"____________In main___________"<<endl;
   FlowNetwork *F=new FlowNetwork(10);
-
-
-  // e->print();
-  // F->add_edge(*e);
-  // e=new Flowedge(0,2,10)
-  //e->print();
   int from,to,cap;
   for(int i=0;i<5;i++)
   {
     cin>>from>>to>>cap;
     Flowedge *e=new Flowedge(from,to,cap);
     e->print();
-    F->add_edge(*e);
+    F->add_edge(e);
   }
 
   F->print();
+  F->print_resg();
 
 }
-
 
 
 
