@@ -76,10 +76,7 @@ class FlowNetwork
   {
     // cout<<"____________class FlowNetwork___________"<<endl;
     N=N1;
-    /*for(int i=0;i<N;i++)
-    {
-      F[i]= new vector<Flowedge>();
-    }*/
+  
   }
   void add_edge(Flowedge* e)
   {
