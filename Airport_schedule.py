@@ -1,5 +1,6 @@
 import numpy as np
 import maxflow
+import networkx
 
 #airport dept,airport arrival, dept time,arrival time
 vertex=dict()
@@ -57,5 +58,5 @@ for st in vertex.keys():
             if(fly[2]=='dept' and int(st[1])+maint<int(fly[1])):
                 print("adding from {} to {}".format(st,fly))
                 g.add_edge(vertex[st],vertex[fly],1,0)
-
 print(g.maxflow())
+print(g.get_nx_graph())
