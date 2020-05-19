@@ -83,7 +83,7 @@ class FlowNetwork
   int N;
   FlowNetwork(int N1)
   {
-    cout<<"____________class FlowNetwork___________"<<endl;
+    // cout<<"____________class FlowNetwork___________"<<endl;
     N=N1;
     /*for(int i=0;i<N;i++)
     {
@@ -99,7 +99,7 @@ class FlowNetwork
   }
   void add_edge(Flowedge* e)
   {
-    cout<<"____________add_Edge___________"<<endl;
+    // cout<<"____________add_Edge___________"<<endl;
     //cout<<e.from()<<"-->"<<e.to()<<endl;
     F[e->from()].push_back(e);
     //cout<<"here";
@@ -161,9 +161,9 @@ public:
 
 
 
-	 void push(FlowNetwork *G,Vertex *v, Vertex *w)
+	 bool push(FlowNetwork *G,Vertex *v, Vertex *w)
 	{
-		cout<<"____push_____"<<endl;
+		// cout<<"____push_____"<<endl;
 		char etype;Flowedge *e;int delta;
 		for(Flowedge *u : G->F[v->identity])
       {
@@ -195,24 +195,29 @@ public:
 			delta=min(e->Residual_cap(v->identity,w->identity),G->excess(v->identity));
 			e->flow=e->flow-delta;
 		}
-		cout<<"---inside push---"<<endl;
-		e->print();
+		// cout<<"---inside push---"<<endl;
+		// e->print();
+
+		if(delta==0)
+		return false;
+
+		return true;
 	}
 
 	void relabel(Vertex *v)
 	{
-		cout<<"relabel "<<v->identity<<"init ht "<<v->height<<" new ht ";
+		// cout<<"relabel "<<v->identity<<"init ht "<<v->height<<" new ht ";
 		v->height=v->height+1;
-		cout<<v->height<<endl;
+		// cout<<v->height<<endl;
 
 
 	}
 
-  void Preflow_push_algo(FlowNetwork *G,int t)
+  int Preflow_push_algo(FlowNetwork *G,int t)
   {
   	// for (int i=0;i<t->identity;i++)
   	// {
-		cout<<"______In pre push flow aglo______"<<endl;
+		// cout<<"______In pre push flow aglo______"<<endl;
 		int excess_s=0;
   		for(Flowedge* u:G->F[0])
   		{
@@ -227,29 +232,33 @@ public:
   				u->flow=0;
   			}
   		}
-			cout<<" PUSHED EVERYTHING POSSIBLE FROM s"<<endl;
-			G->print();
-			G->vertex_print();
+			// cout<<" PUSHED EVERYTHING POSSIBLE FROM s"<<endl;
+			// G->print();
+			// G->vertex_print();
   	// }
 		G->V[0]->height=t+1;
 		// G->V[0]->excess=excess_s;
   	// int max=G->V[0]->height;
-		int max=0;
+
   	int MHV;
   	bool done=false;
   	while(!done)
 		{
+			int max=0;
 			done=true;
 			for(int i=0;i<t;i++)
 			{
-				if((G->V[i]->height>=max)&&(G->excess(G->V[i]->identity)>0))
+				if(G->excess(G->V[i]->identity)>0)
+			{
+				if((G->V[i]->height>=max))
 				{
 					done=false;
 					MHV=i;
 					max=G->V[i]->height;
 				}
 			}
-			cout<<"Max ht "<<max<<" @ "<<MHV<<endl;
+			}
+			// cout<<"Max ht "<<max<<" @ "<<MHV<<endl;
 
 			bool rel=true;
 			if(done==false)
@@ -260,7 +269,7 @@ public:
 					if(G->V[w->other(MHV)]->height==(G->V[MHV]->height-1))
 					{
 						rel=false;
-						push(G,G->V[MHV],G->V[w->other(MHV)]);
+						rel=!(push(G,G->V[MHV],G->V[w->other(MHV)]));
 
 					}
 
@@ -272,12 +281,13 @@ public:
 				}
 			}
 
-			G->vertex_print();
+			// G->vertex_print();
 		}
 
-
-		G->vertex_print();
-		G->print();
+		cout<<" Max flow : "<<G->excess(t)<<endl;
+		return G->excess(t);
+		// G->vertex_print();
+		// G->print();
   }
 
 };
@@ -285,7 +295,8 @@ public:
 
 void demo()
 {
-  cout<<"____________In main___________"<<endl;
+  cout<<"____________In demo___________"<<endl;
+	cout<<" Note: Always enter keeping 0 as source and sink=number of nodes-1"<<endl;
   FlowNetwork *F=new FlowNetwork(10);
 
 
