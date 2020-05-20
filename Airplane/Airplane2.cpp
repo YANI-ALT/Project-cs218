@@ -261,7 +261,7 @@ int maxflow(FlowNetwork *G,int s,int t)
 
 
 
-void max_Flow_schedule(FlowNetwork *F,int n,int* from_to,map<string,int>*vert,map<int,string>* rev_vert)
+void max_Flow_schedule(FlowNetwork *F,int n,int* from_to,map<string,int> vert,map<int,string> rev_vert)
 {
   FF ford_fulk;
   // int k;
@@ -337,7 +337,57 @@ void max_Flow_schedule(FlowNetwork *F,int n,int* from_to,map<string,int>*vert,ma
   cout<<"Minimum planes: "<<mid<<endl;
 
 
+  int s_=2,t_=3;
+  int start,next;
+  string path[100];int count=0;
 
+
+    for(Flowedge* w:F->F[s_])
+    {
+      if(w->flow==1 && w->from()==s_)
+      {
+        path[count]="";
+
+        // cout<<"here"<<endl;
+        start=w->other(s_);
+        path[count]=rev_vert[start]+" "+rev_vert[from_to[start]];
+        // cout<<"from:"<<start<<" "<<rev_vert[start]<<endl;
+        // cout<<"to :"<<from_to[start]<<" "<<rev_vert[from_to[start]]<<endl;
+        while(start!=t_)
+        { for(Flowedge* w1: F->F[from_to[start]] )
+          {
+            if(w1->flow==1 && w1->from()==from_to[start])
+            {
+
+              next=w1->other(from_to[start]);
+              if(next!=t_)
+              path[count]=path[count]+" "+rev_vert[next]+" "+rev_vert[from_to[next]];
+              // cout<<"next: "<<next<<" "<<rev_vert[next]<<endl;
+              if(next==t_)
+              {
+                start=t_;
+                break;
+              }
+              // start=from_to[next];
+              // break;
+              start=next;
+            }
+            if(start==t_)
+            break;
+
+          }
+        }
+        cout<<endl;
+      }
+      count++;
+
+    }
+    cout<<"The scheduling is as follows: "<<endl;
+
+    for(int j=0;j<=n;j++)
+    {
+      cout<<path[j]<<endl;
+    }
 
 
 }
@@ -497,7 +547,7 @@ void graph_construct(FlowNetwork *F)
       }
       //Flowedge *e=new Flowedge(i,j,1);
 
-      max_Flow_schedule(F,n,from_to,&vertices,&rev_vert);
+      max_Flow_schedule(F,n,from_to,vertices,rev_vert);
 
 }
 
